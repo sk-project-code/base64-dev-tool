@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>DevTools Base64 — Fast, Private Base64 Encoder & Decoder (Local Only)</title>
+
+  <!-- Primary SEO -->
+  <meta name="description"
+        content="Free Base64 encoder/decoder that runs 100% in your browser. No data sent to servers. Keep a local history, encode or decode instantly, privacy-first." />
+  <meta name="keywords"
+        content="Base64, encode, decode, Base64 encoder, Base64 decoder, online tool, local, privacy, developer tools" />
+  <link rel="canonical" href="https://base64.sk-project.link" />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="author" content="DevTools Base64" />
+  <meta name="theme-color" content="#ff8a00" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://base64.sk-project.link/sitemap.xml" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="DevTools Base64 — Fast, Private Base64 Encoder & Decoder" />
+  <meta property="og:description"
+        content="Encode/decode Base64 locally in your browser with a built-in history. Privacy-first: nothing leaves your device." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://base64.sk-project.link" />
+  <meta property="og:image" content="https://base64.sk-project.link/og-image.png" />
+  <meta property="og:image:alt" content="DevTools Base64 — Encode and decode Base64 locally." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DevTools Base64 — Fast, Private Base64 Encoder & Decoder" />
+  <meta name="twitter:description"
+        content="100% local Base64 tool with history. No metrics, no tracking, privacy-first." />
+  <meta name="twitter:image" content="https://base64.sk-project.link/og-image.png" />
+
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "DevTools Base64",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "description": "A fast, privacy-first Base64 encoder/decoder that runs entirely in the browser with local history.",
+      "url": "https://base64.sk-project.link",
+      "image": "https://base64.sk-project.link/og-image.png",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Base64 encode",
+        "Base64 decode",
+        "Local history (stored only on your device)",
+        "No tracking or metrics"
+      ],
+      "publisher": {
+        "@type": "Organization",
+        "name": "DevTools Base64"
+      }
+    }
+  </script>
+
+  <!-- Structured Data: FAQPage -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Do you collect any metrics or personal information?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We don't collect any metrics or any personal information. Everything you see in the history is stored only on your computer."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I use DevTools Base64?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use this as much as you want, thanks for AI."
+          }
+        }
+      ]
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --orange: #ff8a00;
+      --orange-hover: #ff9f2b;
+      --ring: rgba(255, 138, 0, 0.35);
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background: var(--bg);
+      display: grid;
+      grid-template-rows: 1fr auto;
+      min-height: 100vh;
+    }
+
+    main {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    /* Top actions row above panel */
+    .top-actions {
+      width: min(900px, 100%);
+      margin: 0 auto 12px auto;
+      display: flex;
+      justify-content: flex-end; /* align right */
+    }
+
+    .top-actions button {
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      background: var(--orange);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 6px 18px rgba(255, 138, 0, 0.28);
+    }
+
+    .top-actions button:hover {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
+    }
+
+    .top-actions button:active {
+      transform: translateY(0);
+    }
+
+    .card {
+      width: min(900px, 100%);
+      background: var(--card);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: flex; /* support reordering */
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .title {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* Field wrapper to place copy buttons inside */
+    .field {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      resize: vertical;
+      padding: 12px 44px 12px 14px; /* space for copy button on right */
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      outline: none;
+      font: 500 14px/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #fafafa;
+    }
+
+    textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: #e5e7eb;
+      color: #111827;
+      border-radius: 10px;
+      padding: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      transition: background 120ms ease, transform 120ms ease;
+    }
+
+    .copy-btn:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    .copy-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Rows and ordering for swap */
+    #textRow {
+      order: 1;
+    }
+
+    #actionsRow {
+      order: 2;
+    }
+
+    #b64Row {
+      order: 3;
+    }
+
+    .card.swapped #textRow {
+      order: 3;
+    }
+
+    .card.swapped #b64Row {
+      order: 1;
+    }
+
+    .card.swapped #actionsRow {
+      order: 2;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start; /* left align */
+      padding: 6px 0 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      background: var(--orange);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 6px 18px rgba(255, 138, 0, 0.28);
+    }
+
+    button:hover {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+      box-shadow: none;
+      font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .icon {
+      width: 1.1em;
+      height: 1.1em;
+      display: inline-block;
+    }
+
+    .arrow {
+      transition: transform 160ms ease;
+    }
+
+    .arrow.flip {
+      transform: rotate(180deg);
+    }
+
+    footer {
+      position: sticky;
+      bottom: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 18px;
+      font-size: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    footer a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted currentColor;
+      cursor: pointer;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Right history drawer */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(420px, 90vw);
+      background: #fff;
+      box-shadow: -12px 0 30px rgba(0, 0, 0, 0.12);
+      transform: translateX(100%);
+      transition: transform 200ms ease;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      z-index: 60;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer header {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .drawer .content {
+      overflow: auto;
+      padding: 12px 16px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fafafa;
+    }
+
+    .history-item time {
+      color: var(--muted);
+      font-size: 12px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .history-item .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: #ffe8d1;
+      color: #7a3e00;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .drawer footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Overlay for modals & drawer */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+      z-index: 50;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal & Toast */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 70;
+      pointer-events: none;
+    }
+
+    .modal .window {
+      width: min(680px, 92vw);
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transform: translateY(10px);
+      opacity: 0;
+      transition: transform 160ms ease, opacity 160ms ease;
+    }
+
+    .modal.show {
+      pointer-events: auto;
+    }
+
+    .modal.show .window {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .modal header, .modal footer {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal footer {
+      border-top: 1px solid #e5e7eb;
+      border-bottom: none;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .close-x {
+      background: transparent;
+      color: #111827;
+      box-shadow: none;
+      padding: 6px 10px;
+      border: none;
+    }
+
+    .close-x:hover {
+      background: #f3f4f6;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    /* Toast panel (auto-hide) */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      z-index: 80;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none; /* non-interactive */
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="card" aria-label="Base64 tool">
+    <!-- See All Tools Button -->
+    <div class="top-actions">
+      <button id="seeAllTools" type="button" title="See all developer tools">See all tools</button>
+    </div>
+
+    <!-- Text Row -->
+    <section id="textRow">
+      <h1 id="textTitle" class="title">Text</h1>
+      <div class="field">
+        <textarea id="textArea" placeholder="Type or paste your text here…" spellcheck="false"
+                  aria-label="Text input"></textarea>
+        <button id="copyTextArea" class="copy-btn" type="button" title="Copy text">
+          <!-- Clipboard icon -->
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor"
+                  d="M16 1H8a2 2 0 0 0-2 2v1H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6v-2H5V6h1v1h12V6h1v6h2V6a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2Zm0 3H8V3h8v1Zm4 11h-6a2 2 0 0 0-2 2v6h8a2 2 0 0 0 2-2v-6Zm-8 8v-6h6v6h-6Z" />
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Actions (always stays between rows) -->
+    <div id="actionsRow" class="actions" aria-label="Actions">
+      <button id="encode" type="button" title="Encrypt to Base64 (top → bottom)">
+        <!-- Arrow Down icon -->
+        <svg id="encArrow" class="icon arrow " viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v14M12 17l-5-5M12 17l5-5" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Encrypt
+      </button>
+
+      <button id="decode" type="button" title="Decrypt from Base64 (bottom → top)">
+        <!-- Arrow Up icon -->
+        <svg id="decArrow" class="icon arrow flip" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v14M12 17l-5-5M12 17l5-5" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Decrypt
+      </button>
+
+      <button id="swap" class="btn-secondary" type="button" title="Swap fields (Text ↔ Base64)">
+        <!-- Exchange/Swap icon -->
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 7h11m0 0-3-3m3 3-3 3M17 17H6m0 0 3 3m-3-3 3-3" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Swap
+      </button>
+
+      <button id="showHistory" class="btn-secondary" type="button" title="Show Local History">ShowLocalHistory</button>
+    </div>
+
+    <!-- Base64 Row -->
+    <section id="b64Row">
+      <h1 id="b64Title" class="title">Base64</h1>
+      <div class="field">
+        <textarea id="base64Area" placeholder="Your Base64 appears here…" spellcheck="false"
+                  aria-label="Base64 output/input"></textarea>
+        <button id="copyBase64Area" class="copy-btn" type="button" title="Copy Base64">
+
+
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor"
+                  d="M16 1H8a2 2 0 0 0-2 2v1H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6v-2H5V6h1v1h12V6h1v6h2V6a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2Zm0 3H8V3h8v1Zm4 11h-6a2 2 0 0 0-2 2v6h8a2 2 0 0 0 2-2v-6Zm-8 8v-6h6v6h-6Z" />
+          </svg>
+        </button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<footer>
+  <span>© 2025 DevTools Base64</span>
+  <span>•</span>
+  <a id="privacyLink" href="#">Privacy Policy</a>
+  <span>•</span>
+  <a id="termsLink" href="#">Terms of Usage</a>
+  <span>•</span>
+  <a href="https://github.com/YourUsername/YourRepo" target="_blank" rel="noopener">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+         viewBox="0 0 24 24" style="vertical-align: middle; margin-right:4px;">
+      <path d="M12 .296c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577
+      0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756
+      -1.089-.745.083-.729.083-.729 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.809 1.304 3.495.997
+      .108-.775.418-1.305.762-1.605-2.665-.304-5.466-1.334-5.466-5.931 0-1.31.469-2.381 1.236-3.221
+      -.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
+      1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.243 2.874.12 3.176
+      .77.84 1.235 1.911 1.235 3.221 0 4.609-2.804 5.625-5.475 5.921.43.372.823 1.102.823 2.222
+      0 1.606-.014 2.896-.014 3.286 0 .319.218.694.825.576C20.565 22.092 24 17.592 24 12.296
+      c0-6.627-5.373-12-12-12z" />
+    </svg>
+    GitHub
+  </a>
+</footer>
+
+<!-- Overlay (shared by drawer & modals) -->
+<div id="overlay" class="overlay" aria-hidden="true"></div>
+
+<!-- Right History Drawer -->
+<aside id="drawer" class="drawer" aria-label="Local history panel" aria-hidden="true">
+  <header>
+    <h2>Local History</h2>
+    <button id="closeDrawer" class="close-x" aria-label="Close history">✕</button>
+  </header>
+  <div id="historyContent" class="content" role="list"></div>
+  <footer>
+    <small class="muted">Stored in your browser’s local storage.</small>
+    <button id="clearHistory" class="btn-secondary" type="button">Clear History</button>
+  </footer>
+</aside>
+
+<!-- Privacy Modal -->
+<div id="privacyModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+  <div class="window">
+    <header><h3 id="privacyTitle" style="margin:0;">Privacy Policy</h3></header>
+    <div class="body">
+      We don't collect any metrics or any personal information. Everything what you see in the history, store it only in
+      your computer.
+    </div>
+    <footer>
+      <button class="btn-secondary" data-close-modal="privacyModal" type="button">Close</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="termsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+  <div class="window">
+    <header><h3 id="termsTitle" style="margin:0;">Terms of Usage</h3></header>
+    <div class="body">Use this as much as you want, thanks for AI.</div>
+    <footer>
+      <button class="btn-secondary" data-close-modal="termsModal" type="button">Close</button>
+    </footer>
+  </div>
+</div>
+
+<!-- Toast (auto-hide notification) -->
+<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Base64 library (optional). We provide a robust fallback below if this doesn't load. -->
+<script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.7/base64.min.js" defer></script>
+
+<script>
+  (function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const card = document.querySelector('.card');
+
+      const textArea = document.getElementById('textArea');
+      const base64Area = document.getElementById('base64Area');
+
+      const encodeBtn = document.getElementById('encode');
+      const decodeBtn = document.getElementById('decode');
+      const swapBtn = document.getElementById('swap');
+      const showHistoryBtn = document.getElementById('showHistory');
+
+      const encIcon = document.getElementById('encArrow');
+      const decIcon = document.getElementById('decArrow');
+
+      const copyTextAreaBtn = document.getElementById('copyTextArea');
+      const copyBase64AreaBtn = document.getElementById('copyBase64Area');
+
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('overlay');
+      const closeDrawerBtn = document.getElementById('closeDrawer');
+      const historyContent = document.getElementById('historyContent');
+      const clearHistoryBtn = document.getElementById('clearHistory');
+
+      const privacyLink = document.getElementById('privacyLink');
+      const termsLink = document.getElementById('termsLink');
+      const privacyModal = document.getElementById('privacyModal');
+      const termsModal = document.getElementById('termsModal');
+
+      const toast = document.getElementById('toast');
+      let toastTimer = null;
+
+      // "See all tools" redirect (change URL later)
+      const seeAllBtn = document.getElementById('seeAllTools');
+      seeAllBtn.addEventListener('click', () => {
+        window.location.href = 'https://example.com/all-tools';
+      });
+
+      // Local storage history
+      const LS_KEY = 'devtools-base64-history';
+
+      const getHistory = () => {
+        try {
+          return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+        } catch {
+          return [];
+        }
+      };
+      const setHistory = (arr) => {
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify(arr));
+        } catch {
+          alert('Unable to write to local storage.');
+        }
+      };
+      const addHistoryItem = (entry) => {
+        const arr = getHistory();
+        arr.unshift(entry);
+        setHistory(arr.slice(0, 200));
+      };
+      const fmtTime = (ts) => {
+        try {
+          return new Date(ts).toLocaleString();
+        } catch {
+          return String(ts);
+        }
+      };
+      const escapeHTML = (s = '') => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+      const renderHistory = () => {
+        const items = getHistory();
+        historyContent.innerHTML = items.length
+          ? items.map((it, idx) => `
+          <div class="history-item" role="listitem" data-idx="${idx}">
+            <time>${fmtTime(it.ts)}</time>
+            <span class="badge">${it.mode.toUpperCase()}</span>
+            <div><strong>Input:</strong></div>
+            <pre style="white-space:pre-wrap;margin:6px 0 10px;">${escapeHTML(it.input)}</pre>
+            <div><strong>Output:</strong></div>
+            <pre style="white-space:pre-wrap;margin:6px 0 0;">${escapeHTML(it.output)}</pre>
+          </div>`).join('')
+          : '<div class="history-item"><em>No history yet.</em></div>';
+      };
+
+      const openDrawer = () => {
+        renderHistory();
+        drawer.classList.add('open');
+        overlay.classList.add('show');
+        drawer.setAttribute('aria-hidden', 'false');
+        overlay.setAttribute('aria-hidden', 'false');
+      };
+      const closeDrawer = () => {
+        drawer.classList.remove('open');
+        if (!privacyModal.classList.contains('show') && !termsModal.classList.contains('show')) {
+          overlay.classList.remove('show');
+          overlay.setAttribute('aria-hidden', 'true');
+        }
+        drawer.setAttribute('aria-hidden', 'true');
+      };
+
+      const openModal = (modalEl) => {
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        modalEl.classList.add('show');
+        modalEl.setAttribute('aria-hidden', 'false');
+      };
+      const closeModal = (modalEl) => {
+        modalEl.classList.remove('show');
+        modalEl.setAttribute('aria-hidden', 'true');
+        if (!drawer.classList.contains('open') &&
+          !privacyModal.classList.contains('show') &&
+          !termsModal.classList.contains('show')) {
+          overlay.classList.remove('show');
+          overlay.setAttribute('aria-hidden', 'true');
+        }
+      };
+
+      // Toast helper
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      };
+
+      // Base64 helpers (library or Unicode-safe fallback)
+      const hasLib = () => (typeof window.Base64 !== 'undefined' && window.Base64 &&
+        typeof window.Base64.encode === 'function' &&
+        typeof window.Base64.decode === 'function');
+      const encodeString = (str) => hasLib() ? window.Base64.encode(str) : btoa(unescape(encodeURIComponent(str)));
+      const decodeString = (b64) => hasLib() ? window.Base64.decode(b64) : decodeURIComponent(escape(atob(b64)));
+
+      // Swapping helpers
+      const isSwapped = () => card.classList.contains('swapped');
+      const getTextArea = () => (textArea);
+      const getB64Area = () => (base64Area);
+
+      const updateUIForSwap = () => {
+        const swapped = isSwapped();
+        // Flip arrows to reflect data flow direction
+        encIcon.classList.toggle('flip', swapped); // Encrypt arrow
+        decIcon.classList.toggle('flip', !swapped); // Decrypt arrow
+
+        // Update button titles
+        encodeBtn.title = swapped
+          ? 'Encrypt to Base64 (bottom → top)'
+          : 'Encrypt to Base64 (top → bottom)';
+        decodeBtn.title = swapped
+          ? 'Decrypt from Base64 (top → bottom)'
+          : 'Decrypt from Base64 (bottom → top)';
+
+        // Update aria-labels for clarity
+        // getTextArea().setAttribute('aria-label', 'Text input');
+        //  getB64Area().setAttribute('aria-label', 'Base64 output/input');
+      };
+
+      // Encode (Text -> Base64)
+      encodeBtn.addEventListener('click', () => {
+        try {
+          const input = getTextArea().value || '';
+          const output = encodeString(input);
+          getB64Area().value = output;
+          addHistoryItem({ ts: Date.now(), mode: 'encode', input, output });
+        } catch (e) {
+          alert('Unexpected error while encoding.');
+          console.error(e);
+        }
+      });
+
+      // Decode (Base64 -> Text)
+      decodeBtn.addEventListener('click', () => {
+        try {
+          const input = getB64Area().value || '';
+          const output = decodeString(input);
+          getTextArea().value = output;
+          addHistoryItem({ ts: Date.now(), mode: 'decode', input, output });
+        } catch (e) {
+          alert('Invalid Base64 input.');
+          console.error(e);
+        }
+      });
+
+      // Swap fields (visual order only; encode/decode adapt automatically)
+      swapBtn.addEventListener('click', () => {
+        card.classList.toggle('swapped');
+        updateUIForSwap();
+      });
+
+      // Copy helpers
+      const copyText = async (text) => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.top = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          showToast('Copied to clipboard');
+        } catch (e) {
+          console.error(e);
+          showToast('Copy failed');
+        }
+      };
+
+      copyTextAreaBtn.addEventListener('click', () => copyText(textArea.value || ''));
+      copyBase64AreaBtn.addEventListener('click', () => copyText(base64Area.value || ''));
+
+      // Show history
+      showHistoryBtn.addEventListener('click', openDrawer);
+      closeDrawerBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', () => {
+        if (drawer.classList.contains('open')) closeDrawer();
+        if (privacyModal.classList.contains('show')) closeModal(privacyModal);
+        if (termsModal.classList.contains('show')) closeModal(termsModal);
+      });
+
+      // Clear history
+      clearHistoryBtn.addEventListener('click', () => {
+        if (confirm('Clear all local history?')) {
+          setHistory([]);
+          renderHistory();
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (ev) => {
+        if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
+          encodeBtn.click();
+        }
+        if (ev.shiftKey && ev.key === 'Enter') {
+          decodeBtn.click();
+        }
+        if (ev.key === 'Escape') {
+          closeDrawer();
+          closeModal(privacyModal);
+          closeModal(termsModal);
+        }
+      });
+
+      // Footer modals
+      privacyLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(privacyModal);
+      });
+      termsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(termsModal);
+      });
+      document.querySelectorAll('[data-close-modal]').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(document.getElementById(btn.getAttribute('data-close-modal'))));
+      });
+
+      // Initial UI sync
+      updateUIForSwap();
+    });
+  })();
+</script>
+
+<noscript>
+  <style>main, footer {
+    display: none !important;
+  }</style>
+  <div style="padding:16px;font-family:sans-serif;">Please enable JavaScript to use SK Project DevTools Base64.</div>
+</noscript>
+</body>
+</html>
