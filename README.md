@@ -26,11 +26,11 @@
 
 > **Main Panel**
 >
-> ![Main Panel](docs/screenshot-main.png)
+> ![Main Panel](./example1.png)
 
 > **Local History Drawer**
 >
-> ![History Panel](docs/screenshot-history.png)
+> ![History Panel](./example2.png)
 
 ---
 
