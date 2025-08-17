@@ -86,7 +86,7 @@
           "name": "How can I use DevTools Base64?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Use this as much as you want, thanks for AI."
+            "text": "Use this as much as you want."
           }
         }
       ]
@@ -124,15 +124,18 @@
     }
 
     main {
-      display: grid;
-      place-items: center;
-      padding: 24px;
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
     }
 
     /* Top actions row above panel */
     .top-actions {
       width: min(900px, 100%);
-      margin: 0 auto 12px auto;
+      margin-bottom: 15px;
       display: flex;
       justify-content: flex-end; /* align right */
     }
@@ -511,11 +514,12 @@
 </head>
 <body>
 <main>
+  <!-- See All Tools Button -->
+  <div class="top-actions">
+    <button id="seeAllTools" type="button" title="See all developer tools">See all tools</button>
+  </div>
+
   <section class="card" aria-label="Base64 tool">
-    <!-- See All Tools Button -->
-    <div class="top-actions">
-      <button id="seeAllTools" type="button" title="See all developer tools">See all tools</button>
-    </div>
 
     <!-- Text Row -->
     <section id="textRow">
@@ -642,7 +646,7 @@
 <div id="termsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
   <div class="window">
     <header><h3 id="termsTitle" style="margin:0;">Terms of Usage</h3></header>
-    <div class="body">Use this as much as you want, thanks for AI.</div>
+    <div class="body">Use this as much as you want.</div>
     <footer>
       <button class="btn-secondary" data-close-modal="termsModal" type="button">Close</button>
     </footer>
